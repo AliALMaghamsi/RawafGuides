@@ -22,22 +22,23 @@ def create_guide_user(db: Session , guide_data:GuideUPload):
     if not guide_data.passport_number:
         raise ValidationError
     
+    check_user = db.query(User).filter(User.passport == passport_number).first()
+    if check_user:
+        raise ValidationError("This user is added")
     
+
     username = name.replace(" ", "") + "_" + passport_number[:4]
     hashed_password = get_password_hash(passport_number)
-
     guide = User(
-        name = name,
-        passport = passport_number,
-        username = username,
-        hashed_password = hashed_password,
+            name = name,
+            passport = passport_number,
+            username = username,
+            hashed_password = hashed_password,
     )
 
     db.add(guide)
     db.commit()
     db.refresh(guide)
-
-
     return {"username": guide.username, "name": guide.name, "id": guide.id}
 
     
