@@ -53,4 +53,4 @@ app.include_router(admin_router , prefix="/api")
 
 @app.get("/")
 def health_check():
-    return "ProjectT:Ok"
+    return "api:Ok"

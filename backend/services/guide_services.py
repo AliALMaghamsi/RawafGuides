@@ -5,7 +5,6 @@ import pandas as pd
 from schemas.user import GuideUPload
 from sqlalchemy.exc import IntegrityError
 from pydantic import ValidationError
-from passlib import hash
 from core.sequrity import get_password_hash
 from io import BytesIO
 
