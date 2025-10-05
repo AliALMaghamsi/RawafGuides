@@ -4,7 +4,7 @@ from core.config import settings
 
 
 
-Database_url = settings.DATABSE_URL
+Database_url = settings.DATABASE_URL
 connect_args = {"check_same_thread":False}
 
 engine = create_engine(Database_url,connect_args= connect_args)

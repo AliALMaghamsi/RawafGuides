@@ -4,11 +4,21 @@ from pydantic import BaseModel
 class GuideUPload(BaseModel):
     name:str
     passport_number:str
+    package_id : int | None = None
 
 
-class GuideDB(BaseModel):
-    id:int
-    name:str
+
+class GuideDB(GuideUPload):
     username:str
-    passport_number:str
+    hashed_password : str
+    
+    
+
+
+class Token(BaseModel):
+    access_token : str
+    token_type:str
+
+class TokenData(BaseModel):
+    username:str|None = None
 

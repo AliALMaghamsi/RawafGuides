@@ -5,10 +5,10 @@ from pydantic import field_validator
 class Settings(BaseSettings):
     API_PREFIX:str
     DEBUG:bool
-    DATABSE_URL:str
+    DATABASE_URL:str
     ALLOWED_ORIGINS:str
-    AMDIN_USERNAME:str
-    AMDIN_PASSWORD:str
+    ADMIN_USERNAME:str
+    ADMIN_PASSWORD:str
     SECRET_KEY:str
     ACCESS_TOKEN_EXPIRE_MINUTES:int
     ALGORITHM:str
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     
     class Config:
         env_file = ".env"
-        env_file_encoding = "uft-8"
+        env_file_encoding = "utf-8"
         case_sensitive = True
 
 settings = Settings()

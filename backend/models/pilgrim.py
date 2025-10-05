@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean,Column,Integer,String,Enum,ForeignKey , DateTime
 from db.database import Base
-from user import User
+
 
 class Pilgrim(Base):
     __tablename__ = "pilgrim"

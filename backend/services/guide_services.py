@@ -6,6 +6,12 @@ from schemas.user import GuideUPload
 from sqlalchemy.exc import IntegrityError
 from pydantic import ValidationError
 from passlib import hash
+from core.sequrity import get_password_hash
+from io import BytesIO
+
+
+
+
 
 def create_guide_user(db: Session , guide_data:GuideUPload):
     passport_number = guide_data.passport_number
@@ -18,11 +24,11 @@ def create_guide_user(db: Session , guide_data:GuideUPload):
     
     
     username = name.replace(" ", "") + "_" + passport_number[:4]
-    hashed_password = hash.bcrypt.hash(passport_number)
+    hashed_password = get_password_hash(passport_number)
 
     guide = User(
         name = name,
-        passport_number = passport_number,
+        passport = passport_number,
         username = username,
         hashed_password = hashed_password,
     )
@@ -37,8 +43,9 @@ def create_guide_user(db: Session , guide_data:GuideUPload):
     
 
 
-def process_guide_file(file: UploadFile , db:Session):
-    df = pd.read_excel(file)
+async def process_guide_file(file: UploadFile , db:Session):
+    content = await file.read()
+    df = pd.read_excel(BytesIO(content))
     errors = []
     for index, row in df.iterrows():
         
@@ -66,3 +73,6 @@ def process_guide_file(file: UploadFile , db:Session):
         "failed" : len(errors),
         "errors": errors
     }
+
+
+
