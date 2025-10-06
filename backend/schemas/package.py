@@ -8,7 +8,7 @@ class PackageCreate(BaseModel):
     package_number :str
     hotel1 :str
     hotel2 :str
-    hotel3 :str
+    hotel3 :Optional[str]= None
     check_in_date_h1 :date
     check_out_date_h1 :date
     check_in_date_h2 :date
@@ -21,4 +21,4 @@ class PackageRead(PackageCreate):
 
 
     class Config:
-        orm_mode = True
+        from_attributes = True
