@@ -1,4 +1,5 @@
 from models.user import User
+from models.pilgrim import Pilgrim
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 import pandas as pd 
@@ -28,7 +29,7 @@ async def process_guide_file(file: UploadFile , db:Session):
 
         except IntegrityError as ie :
             db.rollback()
-            errors.append(f"Row:{index}: {ve}")
+            errors.append(f"Row:{index}: {ie}")
         except Exception as e :
             db.rollback()
             errors.append(f"Row: {index}: {e}")
@@ -63,6 +64,7 @@ def create_guide_user(db: Session , guide_data:GuideUPload):
     db.add(guide)
     db.commit()
     db.refresh(guide)
+    
     return {"username": guide.username, "name": guide.name, "id": guide.id}
 
     
