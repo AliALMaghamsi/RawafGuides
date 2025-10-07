@@ -1,7 +1,7 @@
-from fastapi import UploadFile
+from fastapi import UploadFile , HTTPException , status
 from sqlalchemy.orm import Session
 import pandas as pd 
-from schemas.package import PackageCreate
+from schemas.package import PackageCreate , PackageRead
 from sqlalchemy.exc import IntegrityError
 from pydantic import ValidationError
 from io import BytesIO
@@ -119,7 +119,7 @@ async def process_package_file(file:UploadFile , db:Session):
 def create_package(db:Session, package_data:PackageCreate):
     check_package = db.query(Package).filter(Package.package_number == package_data.package_number).first()
     if check_package:
-        raise ValidationError("Package was added")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Package allready added")
     
     package = Package(**package_data.model_dump())
     db.add(package)
@@ -167,5 +167,14 @@ def create_package(db:Session, package_data:PackageCreate):
     db.commit()
     
 
-    return package
+    return PackageRead.model_validate(package)
 
+
+def delete_package(db:Session , package_number :int):
+    package = db.query(Package).filter(Package.package_number == package_number).first()
+    if package:
+        db.delete(package)
+        db.commit()
+    else:
+        raise HTTPException()
+    

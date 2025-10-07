@@ -1,4 +1,4 @@
-from pydantic import BaseModel , Field
+from pydantic import BaseModel , Field , ConfigDict
 from typing import Optional
 
 
@@ -14,3 +14,5 @@ class RoomCreate(BaseModel):
 
 class RoomRead(RoomCreate):
     id:int
+
+    model_config = ConfigDict(from_attributes=True)

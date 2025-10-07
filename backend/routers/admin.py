@@ -3,9 +3,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter , Depends , HTTPException , status, UploadFile , File
 from sqlalchemy.orm import Session
 from services.guide_services import process_guide_file , create_guide_user
-from services.package_services import process_package_file
+from services.package_services import process_package_file , create_package
 from services.pilgrims_services import process_pilgrim_file , create_pilgrim
 from schemas.user import GuideRead, GuideDB , GuideUPload
+from schemas.package import PackageCreate , PackageRead
 from core.sequrity import get_current_admin_user
 from schemas.pilgrim import PilgrimCreate , PilgrimRead
 from models.user import User
@@ -18,6 +19,15 @@ admin_router = APIRouter(
 async def Upload_file(file : UploadFile = File(...) , db : Session = Depends(get_db) , current_user:User = Depends(get_current_admin_user)):
     response = await process_package_file(file=file , db=db)
     return response
+
+@admin_router.post("/create/package", response_model=PackageRead , tags=["Packages"])
+def add_package(package_data:PackageCreate,db : Session = Depends(get_db) , current_user:User = Depends(get_current_admin_user)):
+    response = create_package(db=db , package_data=package_data)
+    return response
+
+@admin_router.delete("/delete/package" , tags=["packages"])
+def delete_package(package_number:int , db:Session = Depends(get_db), current_user:User = Depends(get_current_admin_user)):
+    pass
 
 @admin_router.post("/upload_guides" , tags=["Guides"])
 async def Upload_file(file : UploadFile = File(...) , db : Session = Depends(get_db) , current_user:User = Depends(get_current_admin_user)):

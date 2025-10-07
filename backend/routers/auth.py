@@ -25,7 +25,8 @@ def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm , Depe
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token = create_access_token(data={"sub":user.username})
+    access_token = create_access_token(data={"sub": str(user.id), "username": user.username, "role": user.role.value})
+    
 
     return Token(access_token=access_token , token_type="Bearer")
     

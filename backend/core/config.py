@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     SECRET_KEY:str
     ACCESS_TOKEN_EXPIRE_MINUTES:int
     ALGORITHM:str
+    BATCH_SIZE:int
+    
 
     @field_validator("ALLOWED_ORIGINS")
     def parsed_allowed_origins(cls, v:str):

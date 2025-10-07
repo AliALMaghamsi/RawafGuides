@@ -1,9 +1,12 @@
-from pydantic import BaseModel , Field
+from pydantic import BaseModel , Field , ConfigDict
+from typing import Optional
 
 
-class GuideUPload(BaseModel):
+class GuideBase(BaseModel):
     name:str = Field(... , min_length=1)
-    passport_number:str = Field(..., min_length=1)
+    passport:str = Field(..., min_length=1)
+
+class GuideUPload(GuideBase):
     package_number : str = Field(...,min_length=1)
 
 
@@ -13,10 +16,12 @@ class GuideDB(GuideUPload):
     hashed_password : str
     
     
-class GuideRead(GuideUPload):
+class GuideRead(GuideBase):
     username: str
+    package_id: int
     id: int
 
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Token(BaseModel):
@@ -24,5 +29,7 @@ class Token(BaseModel):
     token_type:str
 
 class TokenData(BaseModel):
-    username:str|None = None
+    id: Optional[int] = None
+    username: Optional[str] = None
+    role: Optional[str] = None
 

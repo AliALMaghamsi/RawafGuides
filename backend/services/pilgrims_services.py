@@ -7,7 +7,7 @@ from pydantic import ValidationError
 from io import BytesIO
 from sqlalchemy.orm import Session
 from .utils import get_guide_id_by_passport, get_package_id_by_number
-    
+from core.config import settings
 
 async def process_pilgrim_file(file:UploadFile ,db:Session):
     content = await file.read()
@@ -15,7 +15,7 @@ async def process_pilgrim_file(file:UploadFile ,db:Session):
     errors = []
     inserted_count = 0
     pending = []
-    BATCH_SIZE = 100
+    
 
     for index , row in df.iterrows():
         try:
@@ -61,7 +61,7 @@ async def process_pilgrim_file(file:UploadFile ,db:Session):
             )
            
             pending.append(pilgrim)
-            if len(pending) >= BATCH_SIZE:
+            if len(pending) >= settings.BATCH_SIZE:
                 db.add_all(pending)
                 db.commit()
                 inserted_count += len(pending)
