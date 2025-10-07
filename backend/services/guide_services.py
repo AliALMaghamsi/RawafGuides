@@ -3,11 +3,13 @@ from models.pilgrim import Pilgrim
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 import pandas as pd 
-from schemas.user import GuideUPload
+from schemas.user import GuideUPload , GuideRead
 from sqlalchemy.exc import IntegrityError
 from pydantic import ValidationError
 from core.sequrity import get_password_hash
 from io import BytesIO
+from .utils import get_package_id_by_number
+from models.package import Package
 
 
 async def process_guide_file(file: UploadFile , db:Session):
@@ -18,7 +20,9 @@ async def process_guide_file(file: UploadFile , db:Session):
         
         name = str(row["name"]).strip()
         passport_number = str(row["passport_number"]).strip()
-        row_dict = {"name": name, "passport_number": passport_number}
+        package_number = str(row["package_number"]).strip()
+
+        row_dict = {"name": name, "passport_number": passport_number , "package_number":package_number}
         
         try:
             guide = GuideUPload(**row_dict)
@@ -46,6 +50,7 @@ async def process_guide_file(file: UploadFile , db:Session):
 def create_guide_user(db: Session , guide_data:GuideUPload):
     passport_number = guide_data.passport_number
     name = guide_data.name
+    package_id = get_package_id_by_number(db=db , package_number=guide_data.package_number)
     
     check_user = db.query(User).filter(User.passport == passport_number).first()
     if check_user:
@@ -59,13 +64,19 @@ def create_guide_user(db: Session , guide_data:GuideUPload):
             passport = passport_number,
             username = username,
             hashed_password = hashed_password,
+            package_id = package_id,
     )
 
     db.add(guide)
     db.commit()
     db.refresh(guide)
     
-    return {"username": guide.username, "name": guide.name, "id": guide.id}
+    return GuideRead(
+                    name=guide.name,
+                    passport_number=guide.passport,
+                    package_number=guide_data.package_number,
+                    username=guide.username,id=guide.id 
+                    )
 
     
 

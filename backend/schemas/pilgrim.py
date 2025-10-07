@@ -6,22 +6,30 @@ class GenderEnum(str,Enum):
     male = "male"
     female = "female"
 
-
-class PilgrimCreate(BaseModel):
-   
+class PilgrimBase(BaseModel):
     name: str = Field(... , min_length=1)
     passport_number:str = Field(...)
-    assigned_guide_passport:str = Field(...)
-    package_number:str = Field(...)
     room_type :int = Field(...)
     group_id:Optional[int]=None
     gender:GenderEnum
 
+class PilgrimCreate(PilgrimBase):
+   
+    
+    assigned_guide_passport:str = Field(...)
+    package_number:str = Field(...)
+    
+
 
     
 
-class PilgrimRead(PilgrimCreate):
+class PilgrimRead(PilgrimBase):
     id:int
+    assigned_guide_id : int 
+    package_id : int
+
+    class Config:
+        from_attributes = True
 
 
 class PilgrimUpdate(BaseModel):

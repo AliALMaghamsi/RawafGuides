@@ -9,7 +9,9 @@ def get_user_by_username(db : Session , username :str):
 
 
 def get_guide_id_by_passport(db:Session , passport_number:str):
-    return db.query(User).filter(User.passport == passport_number)
+    guide_id= db.query(User).filter(User.passport == passport_number).first()
+    return guide_id.id
 
 def get_package_id_by_number(db:Session , package_number:str):
-    return db.query(Package).filter(Package.package_number == package_number)
+    package_id = db.query(Package).filter(Package.package_number == package_number).first()
+    return package_id.id
