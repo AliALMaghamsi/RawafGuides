@@ -1,7 +1,7 @@
 from models.user import User
 from sqlalchemy.orm import Session
 from models.user import User
-from models.package import Package
+
 from fastapi import HTTPException , status
 
 
@@ -17,9 +17,3 @@ def get_guide_id_by_passport(db:Session , passport_number:str):
     if not guide_id:
         return None
     return guide_id.id
-
-def get_package_id_by_number(db:Session , package_number:str):
-    package_id = db.query(Package).filter(Package.package_number == package_number).first()
-    if not package_id:
-        return None
-    return package_id.id

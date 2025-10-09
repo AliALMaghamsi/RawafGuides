@@ -4,15 +4,18 @@ from typing import Optional
 
 
 
-class RoomCreate(BaseModel):
-    hotel_name : str = Field(...)
-    package_id:str =Field(...)
-    room_name:str = Field(...)
-    capacity:int = Field(...)
-    current_capacity:int = Field(...,default=0)
+class RoomBase(BaseModel):
+    hotel_id : int
+    guide_id :int
+    room_number : str
+    capacity:int
+    current_capacity:int = 0
 
+class RoomCreate(RoomBase):
+    pass
 
-class RoomRead(RoomCreate):
-    id:int
+class RoomRead(RoomBase):
+    id : int 
 
     model_config = ConfigDict(from_attributes=True)
+    

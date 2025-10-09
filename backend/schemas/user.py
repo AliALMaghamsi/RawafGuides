@@ -1,35 +1,26 @@
 from pydantic import BaseModel , Field , ConfigDict
 from typing import Optional
+from enum import Enum
 
+class Role(str, Enum):
+    admin = "admin"
+    guide = "guide"
 
-class GuideBase(BaseModel):
-    name:str = Field(... , min_length=1)
-    passport:str = Field(..., min_length=1)
+class UserBase(BaseModel):
+    name:str
+    role:Role = Role.guide
 
-class GuideUPload(GuideBase):
-    package_number : str = Field(...,min_length=1)
+class UserUpload(UserBase):
+    pass
 
-
-
-class GuideDB(GuideUPload):
-    username:str
+class UserCreate(UserBase):
+    username : str
     hashed_password : str
-    
-    
-class GuideRead(GuideBase):
-    username: str
-    package_id: int
+
+
+class UserRead(UserBase):
     id: int
+    username:str
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class Token(BaseModel):
-    access_token : str
-    token_type:str
-
-class TokenData(BaseModel):
-    id: Optional[int] = None
-    username: Optional[str] = None
-    role: Optional[str] = None
-
+    

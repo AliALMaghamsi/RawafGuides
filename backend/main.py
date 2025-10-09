@@ -3,10 +3,9 @@ from fastapi import FastAPI , UploadFile , Depends , File
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from db.database import get_db , create_tables , SessionLocal
-from models.package import Package
+from models.hotel import Hotel
 from models.pilgrim import Pilgrim
 from models.room import Room 
-from services.guide_services import process_guide_file
 from core.sequrity import get_password_hash
 from models.user import User , Role
 from core.config import settings

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from datetime import timedelta
 from core.sequrity import authenticate_user , create_access_token , get_current_user
-from schemas.user import Token , GuideUPload , GuideDB
+from schemas.token import Token
 from db.database import get_db
 from fastapi.security import OAuth2PasswordRequestForm
 

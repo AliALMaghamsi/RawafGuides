@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordBearer , OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from db.database import get_db
-from schemas.user import TokenData
+from schemas.token import TokenData
 from services.utils import get_user_by_id , get_user_by_username
 from models.user import User , Role
 
