@@ -1,21 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import {BrowserRouter as Router, Route, Routes, BrowserRouter} from 'react-router-dom'
-import GuidesPage from './GuidesPage.jsx'
-import LoginPage from './LoginPage.jsx'
-import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import GuideDashboard from "./pages/GuideDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <BrowserRouter>
-    
-    <Routes>
-      <Route path="/" element={<LoginPage/>}/>
-      <Route path="/guides" element={<GuidesPage/>}/>
-    </Routes>
-    </BrowserRouter>
-  )
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/guide-dashboard" element={<GuideDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
 
 export default App

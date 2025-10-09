@@ -6,6 +6,7 @@ from core.sequrity import authenticate_user , create_access_token , get_current_
 from schemas.token import Token
 from db.database import get_db
 from fastapi.security import OAuth2PasswordRequestForm
+from schemas.user import LoginRequest
 
 
 
@@ -16,7 +17,7 @@ auth_router = APIRouter(
 
 
 @auth_router.post("/login" , response_model=Token)
-def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm , Depends()] , db:Session = Depends(get_db)):
+def login_for_access_token(form_data: LoginRequest , db:Session = Depends(get_db)):
     user = authenticate_user(form_data.username , form_data.password , db)
     if not user :
         raise HTTPException(

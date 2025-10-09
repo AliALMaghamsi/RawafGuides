@@ -11,6 +11,7 @@ from models.user import User , Role
 from core.config import settings
 from routers.auth import auth_router
 from routers.admin import admin_router
+from routers.user import guide_router
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -38,7 +39,6 @@ async def lifespan(app:FastAPI):
 
 
 app = FastAPI(lifespan= lifespan)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins = settings.ALLOWED_ORIGINS,
@@ -49,6 +49,7 @@ app.add_middleware(
 
 app.include_router(auth_router , prefix="/api")
 app.include_router(admin_router , prefix="/api")
+app.include_router(guide_router, prefix="/api")
 
 @app.get("/")
 def health_check():
