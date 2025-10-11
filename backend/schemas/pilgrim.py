@@ -24,6 +24,7 @@ class PilgrimUpdateRoom(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class PilgrimRead(PilgrimBase):
+    id:int
     guide_id : int
     room_id: Optional[int] = None
     model_config = ConfigDict(from_attributes=True)

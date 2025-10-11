@@ -16,18 +16,18 @@ admin_router = APIRouter(
 
 
 
-@admin_router.post("/upload/guides" , tags=["Guides"])
+@admin_router.post("/upload/guides/" , tags=["Guides"])
 async def Upload_file(file : UploadFile = File(...) , db : Session = Depends(get_db) , current_user:User = Depends(get_current_admin_user)):
     response = await process_guides_file(file=file , db=db)
     return response
     
-@admin_router.post("/create/guide" , tags=["Guides"] , response_model=UserRead)
+@admin_router.post("/create/guide/" , tags=["Guides"] , response_model=UserRead)
 async def create_guide(user_data:UserUpload , db:Session=Depends(get_db), current_user:User = Depends(get_current_admin_user)):
     response = await create_guide_user(user_data=user_data , db=db)
     return response
 
 
-@admin_router.post("upload/pilgrims" , tags=["pilgrims"])
+@admin_router.post("upload/pilgrims/" , tags=["pilgrims"])
 async def Upload_file(file : UploadFile = File(...) , db : Session = Depends(get_db) , current_user:User = Depends(get_current_admin_user)):
     response = await process_pilgrims_file(file=file , db=db)
     return response

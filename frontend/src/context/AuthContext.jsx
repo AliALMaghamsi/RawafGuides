@@ -1,6 +1,5 @@
-// src/context/AuthContext.jsx
-import { createContext, useState } from "react";
-import {jwtDecode} from "jwt-decode";
+import { createContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -9,15 +8,24 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState(() => {
     const storedToken = localStorage.getItem("token");
     if (!storedToken) return null;
-    const decoded = jwtDecode(storedToken);
-    return decoded.role;
+    try {
+      const decoded = jwtDecode(storedToken);
+      return decoded.role;
+    } catch {
+      return null;
+    }
   });
+  const [loading, setLoading] = useState(true); 
 
   const login = (newToken) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
-    const decoded = jwtDecode(newToken);
-    setRole(decoded.role);
+    try {
+      const decoded = jwtDecode(newToken);
+      setRole(decoded.role);
+    } catch {
+      setRole(null);
+    }
   };
 
   const logout = () => {
@@ -26,8 +34,26 @@ export function AuthProvider({ children }) {
     setRole(null);
   };
 
+  // ✅ Check token expiration on page load / refresh
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const now = Date.now() / 1000;
+        if (decoded.exp < now) {
+          logout(); // token expired
+        } else {
+          setRole(decoded.role);
+        }
+      } catch {
+        logout();
+      }
+    }
+    setLoading(false); // done checking
+  }, [token]);
+
   return (
-    <AuthContext.Provider value={{ token, role, login, logout }}>
+    <AuthContext.Provider value={{ token, role, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

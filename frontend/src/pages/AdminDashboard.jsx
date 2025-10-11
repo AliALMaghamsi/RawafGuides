@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import { DndContext, useDraggable, useDroppable, DragOverlay } from '@dnd-kit/core';
 
 
-function AdminPage() {
+
+
+const AdminDashboard = () => {
   return (
-    <>
-    <h1>Admin page</h1>
-    </>
+    <div>AdminDashboard</div>
   )
 }
 
-export default AdminPage
+export default AdminDashboard

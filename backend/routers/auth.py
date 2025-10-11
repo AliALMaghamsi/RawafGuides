@@ -16,7 +16,7 @@ auth_router = APIRouter(
 )
 
 
-@auth_router.post("/login" , response_model=Token)
+@auth_router.post("/login/" , response_model=Token)
 def login_for_access_token(form_data: LoginRequest , db:Session = Depends(get_db)):
     user = authenticate_user(form_data.username , form_data.password , db)
     if not user :

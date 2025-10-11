@@ -13,16 +13,13 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/api/auth/login", { username, password });
+      const res = await api.post("/api/auth/login/", { username, password });
 
       const token = res.data.access_token;
       login(token);
 
       const decoded = JSON.parse(atob(token.split(".")[1]));
       const userRole = decoded.role;
-      const hotelsRes = await api.get("/api/guide/hotels/");
-      console.log(hotelsRes.data);
-
       if (userRole === "admin") navigate("/admin-dashboard");
       else if (userRole === "guide") navigate("/guide-dashboard");
       else navigate("/");
@@ -33,8 +30,9 @@ export default function Login() {
   };
 
   return (
-
+        
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+          
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             
             <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
@@ -55,7 +53,7 @@ export default function Login() {
                 
                 </div>
                 <div className="mt-2">
-                <input value = {password} onChange={e => setPassword(e.target.value)} id="password" type="password" name="password" required autocomplete="current-password" className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                <input value = {password} onChange={e => setPassword(e.target.value)} id="password" type="password" name="password" required autoComplete="current-password" className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                 </div>
             </div>
 
