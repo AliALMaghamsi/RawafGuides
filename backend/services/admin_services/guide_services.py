@@ -22,6 +22,10 @@ async def process_guides_file(file:UploadFile , db:Session):
         guide_name = str(row["guide_name"]).strip()
         try:
             guide = db.query(User).filter(User.name == guide_name).one_or_none()
+            if guide:
+                errors.append(f"Row {index}: Guide is already added")
+                continue
+
             if not guide:
                 hashed_password = get_password_hash(f"{guide_name}@2026")
                 guide = User(

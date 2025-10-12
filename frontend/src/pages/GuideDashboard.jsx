@@ -1,4 +1,3 @@
-// GuideDashboard.jsx
 import { useState, useEffect } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import api from "../api/api";
@@ -87,7 +86,7 @@ const GuideDashboard = () => {
     const fetchRoomTypes = async () => {
       try {
         setLoading(true);
-        const res = await api.get(`/api/guide/hotels/${selectedHotel}/room-types`);
+        const res = await api.get(`/api/guide/hotels/${selectedHotel}/room-types/`);
         setRoomTypes(res.data);
         setSelectedType(null);
         setRooms([]);

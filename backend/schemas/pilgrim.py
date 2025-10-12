@@ -10,6 +10,7 @@ class Gender(str,Enum):
 class PilgrimBase(BaseModel):
     name: str = Field(..., min_length=1)
     gender: Gender
+    passport_number:str
     room_type: int = Field(..., ge=2, le=4)
     group_number: Optional[int] = None
 
