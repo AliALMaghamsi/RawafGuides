@@ -16,4 +16,4 @@ class Room(Base):
     
     hotel = relationship("Hotel", back_populates="rooms")
     guide = relationship("User",back_populates="rooms")
-    pilgrims = relationship("Pilgrim", back_populates="room")
+    

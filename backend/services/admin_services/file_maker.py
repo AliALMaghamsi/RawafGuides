@@ -1,31 +1,44 @@
 from models.pilgrim import Pilgrim
 from models.room import Room
 from fastapi.responses import StreamingResponse
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Session, joinedload
 import io
-import pandas as pd 
+import pandas as pd
 
-async def download_pilgrims(db:Session):
+async def download_pilgrims(db: Session):
     pilgrims = (
         db.query(Pilgrim)
-        .options(joinedload(Pilgrim.room))
-        .order_by(Pilgrim.room_id)
+        .options(
+            joinedload(Pilgrim.guide),
+            joinedload(Pilgrim.hotel1),
+            joinedload(Pilgrim.hotel2),
+            joinedload(Pilgrim.hotel3),
+            joinedload(Pilgrim.room1),
+            joinedload(Pilgrim.room2),
+            joinedload(Pilgrim.room3),
+        )
+        .order_by(Pilgrim.id)
         .all()
     )
 
     data = []
-
     for p in pilgrims:
         data.append({
-            "name":p.name,
-            "passport_number":p.passport_number,
-            "room_number":p.room.room_number if p.room else None,
-            "room_type":p.room.capacity,
-            "room_current_capacity":p.room.current_capacity,
-            "guide":p.guide.name if p.guide else None, 
+            "name": p.name,
+            "group_number": p.group_number,
+            "passport_number": p.passport_number,
+            "hotel1_name": p.hotel1.name if p.hotel1 else None,
+            "h2_hotel": p.hotel2.name if p.hotel2 else None,
+            "h3_hotel": p.hotel3.name if p.hotel3 else None,
+            "h1_room_number": p.room1.room_number if p.room1 else None,
+            "h2_room_number": p.room2.room_number if p.room2 else None,
+            "h3_room_number": p.room3.room_number if p.room3 else None,
+            "guide_name": p.guide.name if p.guide else None,
         })
+
     df = pd.DataFrame(data)
+
+    # Write to Excel stream
     stream = io.BytesIO()
     with pd.ExcelWriter(stream, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="Pilgrims")
@@ -36,7 +49,3 @@ async def download_pilgrims(db:Session):
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": "attachment; filename=pilgrims.xlsx"}
     )
-
-
-
-

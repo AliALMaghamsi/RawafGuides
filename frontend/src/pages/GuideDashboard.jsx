@@ -2,6 +2,25 @@ import { useState, useEffect } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import api from "../api/api";
 
+// Helper to get the correct room field for a pilgrim based on selected hotel
+const getRoomFieldName = (pilgrim, hotelId) => {
+      const hid = Number(hotelId);
+     
+      
+      if (Number(pilgrim.h1_id) === hid) return "room_h1_id";
+      if (Number(pilgrim.h2_id) === hid) return "room_h2_id";
+      if (Number(pilgrim.h3_id) === hid) return "room_h3_id";
+      return null;
+};
+
+
+// Get the room id for a pilgrim for the selected hotel
+const getPilgrimRoomId = (pilgrim, hotelId) => {
+  const field = getRoomFieldName(pilgrim, hotelId);
+  if (!field) return null;
+  return pilgrim[field];
+};
+
 const DraggablePilgrim = ({ pilgrim }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: pilgrim.id.toString(),
@@ -54,13 +73,10 @@ const DroppableRoom = ({ room, children }) => {
 const GuideDashboard = () => {
   const [hotels, setHotels] = useState([]);
   const [selectedHotel, setSelectedHotel] = useState(null);
-
   const [roomTypes, setRoomTypes] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
-
   const [rooms, setRooms] = useState([]);
   const [pilgrims, setPilgrims] = useState([]);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -115,15 +131,15 @@ const GuideDashboard = () => {
       }
     };
     fetchRooms();
-  }, [selectedType]);
+  }, [selectedHotel, selectedType]);
 
-  // Fetch pilgrims (only after selecting room type)
+  // Fetch pilgrims
   useEffect(() => {
-    if (!selectedType) return;
+    if (!selectedHotel || !selectedType) return;
     const fetchPilgrims = async () => {
       try {
         setLoading(true);
-        const res = await api.get(`/api/guide/hotels/rooms/${selectedType}/pilgrims`);
+        const res = await api.get(`/api/guide/hotels/${selectedHotel}/rooms/${selectedType}/pilgrims`);
         setPilgrims(res.data);
       } catch {
         setError("Failed to load pilgrims.");
@@ -132,14 +148,25 @@ const GuideDashboard = () => {
       }
     };
     fetchPilgrims();
-  }, [selectedType]);
+  }, [selectedHotel, selectedType]);
 
   const handleDrop = async (pilgrimId, roomId) => {
+    const pilgrim = pilgrims.find((p) => p.id === pilgrimId);
+    if (!pilgrim)return; 
+    
+    const fieldName = getRoomFieldName(pilgrim, selectedHotel);
+    if (!fieldName)return;
+    
+
     try {
-      await api.put(`/api/guide/pilgrims/${pilgrimId}/`, { room_id: roomId });
+      await api.put(`/api/guide/update/pilgrims/${selectedHotel}/${pilgrimId}/`, {
+        room_id: roomId
+      });
+
+      // Update local state to reflect assignment
       setPilgrims((prev) =>
         prev.map((p) =>
-          p.id === pilgrimId ? { ...p, room_id: roomId } : p
+          p.id === pilgrimId ? { ...p, [fieldName]: roomId } : p
         )
       );
     } catch {
@@ -183,17 +210,18 @@ const GuideDashboard = () => {
         </div>
       )}
 
-      {/* Rooms and Unassigned Pilgrims */}
+      {/* Rooms & Unassigned */}
       {selectedType && (
         <div className="flex gap-4 w-2/4">
           <DndContext
             onDragEnd={(event) => {
-              const pilgrimId = parseInt(event.active.id);
-              const overId = event.over?.id;
-              if (!overId) return;
-              const targetRoomId = overId === "unassigned" ? null : parseInt(overId);
-              handleDrop(pilgrimId, targetRoomId);
-            }}
+            
+            const pilgrimId = parseInt(event.active.id);
+            const overId = event.over?.id;
+            if (!overId) return console.log("No overId, drop ignored");
+            const targetRoomId = overId === "unassigned" ? null : parseInt(overId);
+            handleDrop(pilgrimId, targetRoomId);
+          }}
           >
             {/* Rooms */}
             <div className="w-1/2 bg-gray-50 rounded p-3 shadow-md">
@@ -201,7 +229,7 @@ const GuideDashboard = () => {
               {rooms.map((room) => (
                 <DroppableRoom key={room.id} room={room}>
                   {pilgrims
-                    .filter((p) => p.room_id === room.id)
+                    .filter((p) => getPilgrimRoomId(p, selectedHotel) === room.id)
                     .map((p) => (
                       <DraggablePilgrim key={p.id} pilgrim={p} />
                     ))}
@@ -209,12 +237,12 @@ const GuideDashboard = () => {
               ))}
             </div>
 
-            {/* Unassigned Pilgrims */}
+            {/* Unassigned */}
             <div className="w-1/2 bg-gray-50 rounded p-3 shadow-md">
               <h2 className="font-bold text-lg mb-3">Unassigned Pilgrims</h2>
               <DroppableRoom room={null}>
                 {pilgrims
-                  .filter((p) => !p.room_id)
+                  .filter((p) => !getPilgrimRoomId(p, selectedHotel))
                   .map((p) => (
                     <DraggablePilgrim key={p.id} pilgrim={p} />
                   ))}
