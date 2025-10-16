@@ -17,7 +17,12 @@ async def download_pilgrims(db: Session):
             joinedload(Pilgrim.room2),
             joinedload(Pilgrim.room3),
         )
-        .order_by(Pilgrim.id)
+        .order_by(
+                Pilgrim.room_h1_id.is_(None), Pilgrim.room_h1_id,
+                Pilgrim.room_h2_id.is_(None), Pilgrim.room_h2_id,
+                Pilgrim.room_h3_id.is_(None), Pilgrim.room_h3_id,
+                Pilgrim.id
+                )
         .all()
     )
 
@@ -38,7 +43,7 @@ async def download_pilgrims(db: Session):
 
     df = pd.DataFrame(data)
 
-    # Write to Excel stream
+    
     stream = io.BytesIO()
     with pd.ExcelWriter(stream, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="Pilgrims")

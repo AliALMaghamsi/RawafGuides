@@ -17,7 +17,7 @@ async def update_room(db:Session ,hotel_id:int, pilgrim_id:int , data:PilgrimUpd
     if not pilgrim:
         raise HTTPException(status_code=404, detail="Pilgrim not found")
 
-    # Determine which room_hX_id to update
+    
     if pilgrim.h1_id == hotel_id:
         room_field = "room_h1_id"
     elif pilgrim.h2_id == hotel_id:
