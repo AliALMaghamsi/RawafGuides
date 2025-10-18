@@ -16,6 +16,7 @@ class User(Base):
     username = Column(String(50),unique=True , nullable=False)
     hashed_password = Column(String(128),nullable=False)
     role = Column(Enum(Role),default=Role.guide , nullable=False)
+    hash_row = Column(String(128), nullable=True)
     
     rooms = relationship("Room" , back_populates="guide")
     pilgrims = relationship("Pilgrim", back_populates="guide", cascade="all, delete-orphan")

@@ -99,20 +99,31 @@ const UploadFile = ({uploadUrl , inputId}) => {
             {/* Upload result */}
             {uploadResult && (
                 <div className="mt-4 border p-3 rounded bg-gray-100">
-                <h2 className="font-semibold text-lg text-green-700">Upload Summary</h2>
-                <p>✅ Inserted: {uploadResult.Inserted}</p>
-                <p>❌ Failed: {uploadResult.Failed}</p>
+                  <h2 className="font-semibold text-lg text-green-700">Upload Summary</h2>
+                  <p>✅ Inserted: {uploadResult.Inserted}</p>
+                  <p>⚠️ warnings: {uploadResult.Warnings.length}</p>
+                  <p>❌ Failed: {uploadResult.Failed}</p>
 
-                {uploadResult.Errors && uploadResult.Errors.length > 0 && (
-                    <div className="mt-2">
-                    <h3 className="font-medium text-red-600">Error Details:</h3>
-                    <ul className="list-disc list-inside text-red-500">
-                        {uploadResult.Errors.map((err, index) => (
-                        <li key={index}>{err}</li>
-                        ))}
-                    </ul>
-                    </div>
-                )}
+                  {uploadResult.Errors && uploadResult.Errors.length > 0 && (
+                      <div className="mt-2">
+                      <h3 className="font-medium text-red-600">Error Details:</h3>
+                      <ul className="list-disc list-inside text-red-500">
+                          {uploadResult.Errors.map((err, index) => (
+                          <li key={index}>{err}</li>
+                          ))}
+                      </ul>
+                      </div>
+                  )}
+                  {uploadResult.Warnings && uploadResult.Warnings.length > 0 && (
+                      <div className="mt-2">
+                      <h3 className="font-medium text-orange-400">Warnings Details:</h3>
+                      <ul className="list-disc list-inside text-orange-400">
+                          {uploadResult.Warnings.map((warr, index) => (
+                          <li key={index}>{warr}</li>
+                          ))}
+                      </ul>
+                      </div>
+                  )}
                 </div>
             )}
         </div>

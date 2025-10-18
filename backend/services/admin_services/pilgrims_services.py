@@ -119,7 +119,7 @@ def assign_room_by_group_number(db:Session):
     )
 
     groups = [gr[0] for gr in groups]
-    print(f"✅ Found {len(groups)} groups with exactly 2 pilgrims")
+    
 
     for grn in groups:
         pilgrims = (
@@ -129,12 +129,12 @@ def assign_room_by_group_number(db:Session):
         )
 
         if len(pilgrims) != 2:
-            continue  # skip if something unexpected
+            continue 
 
         p1, p2 = pilgrims
-        print(f"\n🟦 Assigning Group {grn} (Pilgrims: {p1.id}, {p2.id})")
+       
 
-        # Step 2: For each hotel column (h1, h2, h3)
+        
         for i in range(1, 4):
             hotel_id_attr = f"h{i}_id"
             room_type_attr = f"room_type_h{i}"
@@ -170,7 +170,7 @@ def assign_room_by_group_number(db:Session):
                     room.current_capacity += 2  # mark room as full
 
                     db.add_all([p1, p2, room])
-                    db.flush()  # make sure next loop sees changes
+                    db.flush()  
 
     db.commit()
     
